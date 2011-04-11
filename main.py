@@ -74,6 +74,7 @@ class MainHandler(webapp.RequestHandler):
             # finally, we merge the bad boys
             d.update( l )
             
+        
         # and now we prepare our template
         t = template.render(
                                 os.path.join( 
