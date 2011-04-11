@@ -2,13 +2,12 @@
 
 import base64
 import datetime
-import hmac
-import json
 import logging
 import os
 import time
 import yaml
 
+from django.utils import simplejson 
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
@@ -34,12 +33,12 @@ class EditHandler(webapp.RequestHandler):
         self.response.out.write('Well..')
 
 class MainHandler(webapp.RequestHandler):
-    #def get(self):
-        # nothing happens in get, so send them packing to Facebook
-    #    self.redirect( 'http://www.facebook.com/apps/application.php?id=124030941005528' );
-    
-    #def post(self):
     def get(self):
+        # nothing happens in get, so send them packing to Facebook
+        self.redirect( 'http://www.facebook.com/apps/application.php?id=124030941005528' );
+    
+    def post(self):
+    #def get(self):
         # get the config
         c = Config().config
         
@@ -129,7 +128,7 @@ class ParseSignedRequest(object):
         h = base64.decodestring( self.request + '==' )
         
         # now json decode its ass
-        return json.loads( h )
+        return simplejson.loads( h )
 
 class GetAccessKey(object):
     def __init__(self, app_id, app_secret):
@@ -189,7 +188,7 @@ class GetPageEvents(object):
         
         if r.status_code == 200:
             # decode the json
-            d = json.loads( r.content )[ 'data' ]
+            d = simplejson.loads( r.content )[ 'data' ]
             
             # create an list for our future events
             e = [ ]
