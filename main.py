@@ -10,6 +10,8 @@ from google.appengine.ext import db
 from google.appengine.ext import webapp
 from google.appengine.ext.webapp import util
 
+GRAPH_URL = 'https://graph.facebook.com/'
+
 class App(db.Model):
     page_id     = db.StringProperty(required=True)
     bg_url      = db.StringProperty() # if they specify a background url, otherwise show the default one
@@ -37,7 +39,10 @@ class MainHandler(webapp.RequestHandler):
         # get fb access key
         a = GetAccessKey( c[ 'app_id' ], c[ 'app_secret' ] ).token
         
-        self.response.out.write(a)
+        # now we want to get the page's events
+        e = GetPageEvents( a, r[ 'page' ][ 'id' ] ).events
+        
+        self.response.out.write(e)
 
 class Config(object):
     def __init__(self):
@@ -78,17 +83,35 @@ class GetAccessKey(object):
         
     def _get_access_token(self):
         # format the url
-        u = 'https://graph.facebook.com/oauth/access_token?client_id=%(id)s&client_secret=%(secret)s&grant_type=client_credentials' \
+        u = GRAPH_URL + 'oauth/access_token?client_id=%(id)s&client_secret=%(secret)s&grant_type=client_credentials' \
         % { 'id': self.id, 'secret': self.secret }
         
         # make the request
         r = urlfetch.fetch( u )
         
-        d = ''
-        
         if r.status_code == 200:
             # we just want the token thanks
             d = r.content.replace( 'access_token=', '' )
+            
+        return d
+
+class GetPageEvents(object):
+    def __init__(self, access_token, page_id):
+        self.access_token = access_token
+        self.page_id = page_id
+        
+        # now make the request and return decoded json
+        self.events = self._get_events()
+        
+    def _get_events(self):
+        u = GRAPH_URL + self.page_id + '/events?access_token=%s' % self.access_token
+        
+        # make the request
+        r = urlfetch.fetch( u )
+        
+        if r.status_code == 200:
+            # decode the json
+            d = json.loads( r.content )[ 'data' ]
             
         return d
 
