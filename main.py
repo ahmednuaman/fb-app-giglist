@@ -3,11 +3,13 @@
 import base64
 import hmac
 import json
+import os
 import yaml
 
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
 from google.appengine.ext import webapp
+from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp import util
 
 GRAPH_URL = 'https://graph.facebook.com/'
@@ -69,7 +71,16 @@ class MainHandler(webapp.RequestHandler):
             # finally, we merge the bad boys
             d.update( l )
             
-        self.response.out.write(d)
+        # and now we prepare our template
+        t = template.render(
+                                os.path.join( 
+                                                os.path.dirname( __file__ ), 
+                                                'template.html' 
+                                            ), 
+                                { 'd': d } )
+        
+        # and we write it :)
+        self.response.out.write( t )
     
 
 
