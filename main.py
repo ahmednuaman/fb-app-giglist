@@ -216,7 +216,7 @@ class GetPageEvents(object):
 def main():
     application = webapp.WSGIApplication( [
                                             ( '/', MainHandler ),
-                                            ( '/edit', EditHandler )
+                                            ( '/edit/', EditHandler )
                                         ], debug=True )
     util.run_wsgi_app(application)
 
