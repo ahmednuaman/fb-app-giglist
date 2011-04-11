@@ -9,6 +9,7 @@ import os
 import time
 import yaml
 
+from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
 from google.appengine.ext import webapp
@@ -88,11 +89,18 @@ class MainHandler(webapp.RequestHandler):
 
 class Config(object):
     def __init__(self):
-        # read the config
-        f = open( 'config.yaml', 'r' )
+        # check for config in memcache
+        c = memcache.get( 'config' )
         
-        # yamlize its ass
-        c = yaml.load( f.read() )
+        if c is None:
+            # read the config
+            f = open( 'config.yaml', 'r' )
+            
+            # yamlize its ass
+            c = yaml.load( f.read() )
+            
+            # store in memcache
+            memcache.add( 'config', c )
         
         # return it as a var
         self.config = c
