@@ -37,17 +37,19 @@ class MainHandler(webapp.RequestHandler):
         r = ParseSignedRequest( self.request.get( 'signed_request' ) ).data
         
         # get fb access key
-        a = GetAccessKey( c[ 'app_id' ], c[ 'app_secret' ] ).token
+        a = GetAccessKey( c[ 'fb' ][ 'app_id' ], c[ 'fb' ][ 'app_secret' ] ).token
         
         # now we want to get the page's events
         e = GetPageEvents( a, r[ 'page' ][ 'id' ] ).events
         
         # now let's prepare the page defined vars
-        d = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).fetch( 1 )
+        d = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
         
         if d is None:
             # save ourselves sometime and just load all the predefined vars from the yaml
-            
+            d = c[ 'data' ]
+        
+        self.response.out.write(d)
 
 class Config(object):
     def __init__(self):
