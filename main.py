@@ -78,7 +78,7 @@ class MainHandler(webapp.RequestHandler):
         t = template.render(
                                 os.path.join( 
                                                 os.path.dirname( __file__ ), 
-                                                'template.html' 
+                                                'template/index.html' 
                                             ), 
                                 { 'd': d, 'es': e[ 'es' ], 'ne': e[ 'ne' ] } )
         
