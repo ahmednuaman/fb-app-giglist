@@ -13,11 +13,9 @@ sub{vertical-align:text-bottom;}
 input,textarea,select{font-family:inherit;font-size:inherit;font-weight:inherit;}
 input,textarea,select{*font-size:100%;}
 legend{color:#000;}
-.sprite{background:url(../image/sprite.png) no-repeat;}
 .absolute{display:block;position:absolute;}
 .caps{text-transform:uppercase;}
 .fixed{display:block;position:fixed;}
-.grey{color:#999999;}
 .hide{display:none;visibility:hidden;}
 .italic{font-style:italic;}
 .left{display:block;float:left;}
@@ -26,15 +24,12 @@ legend{color:#000;}
 .right{display:block;float:right;}
 .padding{padding:10px;}
 .top{z-index:2147483647;}
-.dialog .dialog_text{display:block;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;behavior:url(/assets/css/ie-css3.htc);padding:10px;background:#555555;background:-moz-linear-gradient(top, #555555, #000000);background:-webkit-gradient(linear, left top, left bottom, from(#555555), to(#000000));background:-webkit-linear-gradient(#555555, #000000);background:linear-gradient(#555555, #000000);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr= #555555 , EndColorStr= #000000 );color:#ffffff;-webkit-box-shadow:0 0 5px #000000;-moz-box-shadow:0 0 5px #000000;box-shadow:0 0 5px #000000;behavior:url(/assets/css/ie-css3.htc);}
-.dialog .dialog_arrow{display:block;position:relative;margin:0 auto;background:url(../image/sprite.png) no-repeat;background-position:-33px -351px;width:16px;height:8px;}
 body,html{margin:0;padding:0;}
 a,body,div,h1,h2,h3,p{font-family:Arial,sans-serif;color:#333333;font-size:9pt;line-height:13pt;}
 a{font-size:9pt;line-height:normal;}
 a:link,a:visited{color:#666666;border-bottom:1px solid #666666;text-decoration:none;}
-a:hover,a:active{color:#5a911c;border-bottom:1px solid #5a911c;text-decoration:none;}
-em{color:#999999;}
-h1,h2,h3{font-family:"Rolina",Arial,sans-serif;line-height:normal;}
+a:hover,a:active{color:#345d94;border-bottom:1px solid #345d94;text-decoration:none;}
+h1,h2,h3{line-height:normal;}
 h1{font-size:22pt;}
 h2{font-size:18pt;}
 h3{font-size:16pt;}
