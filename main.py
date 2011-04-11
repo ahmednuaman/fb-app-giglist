@@ -197,11 +197,15 @@ class GetPageEvents(object):
             
             # interate through the events to find the future ones
             for ev in d:
-                t = datetime.datetime.strptime( ev[ 'start_time' ], '%Y-%m-%dT%H:%M:%S' ) # convert fb time string from 2011-04-24T06:00:00+0000 to time
+                t = datetime.datetime.strptime( ev[ 'start_time' ], '%Y-%m-%dT%H:%M:%S' ).timetuple() # convert fb time string from 2011-04-24T06:00:00+0000 to time
+                
+                c = time.mktime( t )
                 
                 # check to see if this event is in the future
-                if time.mktime( t.timetuple() ) > time.time():
-                   e.append( ev )
+                if c > time.time():
+                    ev[ 'start_time' ] = time.strftime( '%a %d %b at %I:%M%p', t )
+                    
+                    e.append( ev )
                 
             # reverse the list
             e.reverse()
