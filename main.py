@@ -160,8 +160,18 @@ class GetPageEvents(object):
         self.access_token = access_token
         self.page_id = page_id
         
-        # now make the request and return decoded json
-        self.events = self._get_events()
+        # check for events in memcache
+        e = memcache.get( 'events-' + page_id )
+        
+        if e is None:
+            # now make the request and return decoded json
+            e = self._get_events()
+            
+            # store events to memcache
+            memcache.add( 'events-' + page_id, e )
+        
+        # return the events
+        self.events = e
         
     def _get_events(self):
         u = GRAPH_URL + self.page_id + '/events?access_token=%s' % self.access_token
