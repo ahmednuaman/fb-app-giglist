@@ -42,15 +42,17 @@
 		</div>
 		<div id="more_gigs_events">
 			{% for ev in es %}
-				<h2>{{ ev.name }}</h2>
-				<ul>
-					<li>
-						<span>{{ d.text_time }}</span> {{ ev.start_time }}
-					</li>
-					<li>
-						<span>{{ d.text_addr }}</span> {{ ev.location }}
-					</li>
-				</ul>
+				<div>
+					<h2>{{ ev.name }}</h2>
+					<ul>
+						<li>
+							<span>{{ d.text_time }}</span> {{ ev.start_time }}
+						</li>
+						<li>
+							<span>{{ d.text_addr }}</span> {{ ev.location }}
+						</li>
+					</ul>
+				</div>
 			{% endfor %}
 		</div>
 		<script>
