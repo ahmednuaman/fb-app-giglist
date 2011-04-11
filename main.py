@@ -128,8 +128,18 @@ class GetAccessKey(object):
         self.id = app_id
         self.secret = app_secret
         
-        # now let's make the request and get the token
-        self.token = self._get_access_token()
+        # check for access token in memcache
+        t = memcache.get( 'access_token' )
+        
+        if t is None:
+            # now let's make the request and get the token
+            t = self._get_access_token()
+            
+            # store access token to memcache
+            memcache.add( 'access_token', t )
+        
+        # return the token
+        self.token = t
         
     def _get_access_token(self):
         # format the url
