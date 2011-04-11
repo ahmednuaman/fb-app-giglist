@@ -8,4 +8,4 @@ data:
   text_more: 'More gigs:'
   text_time: 'Date &amp; time:'
   text_addr: 'Location:'
-  text_des: 'Description:'
+  css: ''

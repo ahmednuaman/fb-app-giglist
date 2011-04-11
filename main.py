@@ -1,9 +1,12 @@
 #!/usr/bin/env python
 
 import base64
+import datetime
 import hmac
 import json
+import logging
 import os
+import time
 import yaml
 
 from google.appengine.api import urlfetch
@@ -23,8 +26,7 @@ class PageData(db.Model):
     text_more   = db.StringProperty() # the sub title, defaults to 'More gigs:'
     text_time   = db.StringProperty() # prefix for date and time, defaults to 'Date &amp; time:'
     text_addr   = db.StringProperty() # prefix for address/location, defaults to 'Location:'
-    text_des    = db.StringProperty() # prefix for description, defaults to 'Description:'
-
+    css         = db.StringProperty() # should the user decide they want custom css, defaults to nothing
 
 class EditHandler(webapp.RequestHandler):
     def post(self):
@@ -77,7 +79,7 @@ class MainHandler(webapp.RequestHandler):
                                                 os.path.dirname( __file__ ), 
                                                 'template.html' 
                                             ), 
-                                { 'd': d } )
+                                { 'd': d, 'es': e[ 'es' ], 'ne': e[ 'ne' ] } )
         
         # and we write it :)
         self.response.out.write( t )
@@ -153,7 +155,24 @@ class GetPageEvents(object):
             # decode the json
             d = json.loads( r.content )[ 'data' ]
             
-        return d
+            # create an list for our future events
+            e = [ ]
+            
+            # interate through the events to find the future ones
+            for ev in d:
+                t = datetime.datetime.strptime( ev[ 'start_time' ], '%Y-%m-%dT%H:%M:%S' ) # convert fb time string from 2011-04-24T06:00:00+0000 to time
+                
+                # check to see if this event is in the future
+                if time.mktime( t.timetuple() ) > time.time():
+                   e.append( ev )
+                
+            # reverse the list
+            e.reverse()
+            
+            # construct final data object contain the next event and the upcoming events
+            es = { 'ne': e.pop( 0 ), 'es': e }
+            
+        return es
 
 def main():
     application = webapp.WSGIApplication( [

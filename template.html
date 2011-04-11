@@ -5,9 +5,45 @@
 		<meta name="description" content="" />
 		<meta name="keywords" content="" />
 		<link type="text/css" rel="stylesheet" href="/assets/css/styles.css" />
+		{% if d.css %}
+			<style>
+			<!--
+				{{ d.css }}
+			-->
+			</style>
+		{% endif %}
 		<title>Gig List</title>
 	</head>
 	<body>
-		
+		<div id="next_gig_heading">
+			<h1>{{ d.text_next }}</h1>
+		</div>
+		<div id="next_gig_info">
+			<h2>{{ ne.name }}</h2>
+			<ul>
+				<li>
+					<span>{{ d.text_time }}</span> {{ ne.time }}
+				</li>
+				<li>
+					<span>{{ d.text_addr }}</span> {{ ne.location }}
+				</li>
+			</ul>
+		</div>
+		<div id="more_gigs_heading">
+			<h1>{{ d.text_more }}</h1>
+		</div>
+		<div id="more_gigs_events">
+			{% for ev in es %}
+				<h2>{{ ev.name }}</h2>
+				<ul>
+					<li>
+						<span>{{ d.text_time }}</span> {{ ev.time }}
+					</li>
+					<li>
+						<span>{{ d.text_addr }}</span> {{ ev.location }}
+					</li>
+				</ul>
+			{% endfor %}
+		</div>
 	</body>
 </html>
