@@ -4,5 +4,8 @@ runtime: python
 api_version: 1
 
 handlers:
+- url: /assets
+  static_dir: static/assets
+  
 - url: .*
   script: main.py
