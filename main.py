@@ -52,28 +52,37 @@ class MainHandler(webapp.RequestHandler):
         # now we want to get the page's events
         e = GetPageEvents( a, r[ 'page' ][ 'id' ] ).events
         
-        # now let's prepare the page defined vars
-        q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
+        # let's check to see if we have our user prefs cached
+        d = memcache.get( 'prefs-' + r[ 'page' ][ 'id' ] )
         
-        # get the default info
-        d = c[ 'data' ]
+        if d is None:
+            # now let's prepare the page defined vars
+            q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
+            
+            # get the default info
+            d = c[ 'data' ]
+            
+            if q is not None:
+                # now we need to update d with q's values
+                ps = PageData.properties().iteritems()
+                l = { }
+                
+                # we cycle through the properties of the model
+                for k, p in ps:
+                    v = getattr( q, k )
+                    
+                    # if the value isn't empty, we add it to l
+                    if v is not None:
+                        l[ k ] = v
+                    
+                
+                # finally, we merge the bad boys
+                d.update( l )
+                
+                # and stick it in the memcache
+                memcache.add( 'prefs-' + r[ 'page' ][ 'id' ], d )
+            
         
-        if q is not None:
-            # now we need to update d with q's values
-            ps = PageData.properties().iteritems()
-            l = { }
-            
-            # we cycle through the properties of the model
-            for k, p in ps:
-                v = getattr( q, k )
-                
-                # if the value isn't empty, we add it to l
-                if v is not None:
-                    l[ k ] = v
-                
-            # finally, we merge the bad boys
-            d.update( l )
-            
         # and now we prepare our template
         t = template.render(
                                 os.path.join( 
