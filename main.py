@@ -12,7 +12,7 @@ from google.appengine.ext.webapp import util
 
 GRAPH_URL = 'https://graph.facebook.com/'
 
-class App(db.Model):
+class PageData(db.Model):
     page_id     = db.StringProperty(required=True)
     bg_url      = db.StringProperty() # if they specify a background url, otherwise show the default one
     
@@ -42,7 +42,12 @@ class MainHandler(webapp.RequestHandler):
         # now we want to get the page's events
         e = GetPageEvents( a, r[ 'page' ][ 'id' ] ).events
         
-        self.response.out.write(e)
+        # now let's prepare the page defined vars
+        d = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).fetch( 1 )
+        
+        if d is None:
+            # save ourselves sometime and just load all the predefined vars from the yaml
+            
 
 class Config(object):
     def __init__(self):
