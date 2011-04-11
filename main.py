@@ -23,6 +23,11 @@ class PageData(db.Model):
     text_addr   = db.StringProperty() # prefix for address/location, defaults to 'Location:'
     text_des    = db.StringProperty() # prefix for description, defaults to 'Description:'
 
+
+class EditHandler(webapp.RequestHandler):
+    def post(self):
+        self.response.out.write('Well..')
+
 class MainHandler(webapp.RequestHandler):
     #def get(self):
         # nothing happens in get, so send them packing to Facebook
@@ -43,13 +48,30 @@ class MainHandler(webapp.RequestHandler):
         e = GetPageEvents( a, r[ 'page' ][ 'id' ] ).events
         
         # now let's prepare the page defined vars
-        d = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
+        q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
         
-        if d is None:
-            # save ourselves sometime and just load all the predefined vars from the yaml
-            d = c[ 'data' ]
+        # get the default info
+        d = c[ 'data' ]
         
+        if q is not None:
+            # now we need to update d with q's values
+            ps = PageData.properties().iteritems()
+            l = { }
+            
+            # we cycle through the properties of the model
+            for k, p in ps:
+                v = getattr( q, k )
+                
+                # if the value isn't empty, we add it to l
+                if v is not None:
+                    l[ k ] = v
+                
+            # finally, we merge the bad boys
+            d.update( l )
+            
         self.response.out.write(d)
+    
+
 
 class Config(object):
     def __init__(self):
@@ -124,7 +146,8 @@ class GetPageEvents(object):
 
 def main():
     application = webapp.WSGIApplication( [
-                                            ( '/', MainHandler ) 
+                                            ( '/', MainHandler ),
+                                            ( '/edit', EditHandler )
                                         ], debug=True )
     util.run_wsgi_app(application)
 
