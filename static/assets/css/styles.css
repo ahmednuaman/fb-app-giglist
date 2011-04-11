@@ -28,7 +28,7 @@ legend{color:#000;}
 .top{z-index:2147483647;}
 .dialog .dialog_text{display:block;-webkit-border-radius:10px;-moz-border-radius:10px;border-radius:10px;behavior:url(/assets/css/ie-css3.htc);padding:10px;background:#555555;background:-moz-linear-gradient(top, #555555, #000000);background:-webkit-gradient(linear, left top, left bottom, from(#555555), to(#000000));background:-webkit-linear-gradient(#555555, #000000);background:linear-gradient(#555555, #000000);filter:progid:DXImageTransform.Microsoft.gradient(startColorStr= #555555 , EndColorStr= #000000 );color:#ffffff;-webkit-box-shadow:0 0 5px #000000;-moz-box-shadow:0 0 5px #000000;box-shadow:0 0 5px #000000;behavior:url(/assets/css/ie-css3.htc);}
 .dialog .dialog_arrow{display:block;position:relative;margin:0 auto;background:url(../image/sprite.png) no-repeat;background-position:-33px -351px;width:16px;height:8px;}
-body,html{margin:0;padding:0;background:#f1ede5;}
+body,html{margin:0;padding:0;}
 a,body,div,h1,h2,h3,p{font-family:Arial,sans-serif;color:#333333;font-size:9pt;line-height:13pt;}
 a{font-size:9pt;line-height:normal;}
 a:link,a:visited{color:#666666;border-bottom:1px solid #666666;text-decoration:none;}

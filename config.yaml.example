@@ -3,7 +3,7 @@ fb:
   app_key: 
   app_secret: 
 data:
-  bg_url: /assets/image/bg.jpg
+  bg_url: /assets/image/bg.png
   text_next: 'Next gig:'
   text_more: 'More gigs:'
   text_time: 'Date &amp; time:'
