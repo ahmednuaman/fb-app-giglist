@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+import json
 import yaml
 
 from google.appengine.ext import db
@@ -18,12 +19,19 @@ class App(db.Model):
     text_des    = db.StringProperty() # prefix for description, defaults to 'Description:'
 
 class MainHandler(webapp.RequestHandler):
-    def get(self):
+    #def get(self):
         # nothing happens in get, so send them packing to Facebook
-        self.redirect( 'http://www.facebook.com/apps/application.php?id=124030941005528' );
+    #    self.redirect( 'http://www.facebook.com/apps/application.php?id=124030941005528' );
     
-    def post(self):
-        self.response.out.write( 'Pow!' )
+    #def post(self):
+    def get(self):
+        # read the config
+        f = open( 'config.yaml', 'r' )
+        
+        # yamlize its ass
+        c = yaml.dump( yaml.load( f.read() ) )
+        
+        
 
 def main():
     application = webapp.WSGIApplication( [
