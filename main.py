@@ -95,7 +95,6 @@ class MainHandler(webapp.RequestHandler):
         self.response.out.write( t )
     
 
-
 class Config(object):
     def __init__(self):
         # check for config in memcache
