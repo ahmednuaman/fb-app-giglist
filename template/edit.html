@@ -8,6 +8,64 @@
 		<title></title>
 	</head>
 	<body>
-		
+		<div id="authed" class="hide">
+			
+		</div>
+		<div id="fb-root"></div>
+		<script src="http://connect.facebook.net/en_US/all.js"></script>
+		<script src="/assets/js/jquery.js"></script>
+		<script>
+		<!--
+			var r = {{ r }};
+			var v = getVars();
+			
+			function getVars()
+			{
+				var u	= window.location.href.split( '?' );
+				var vs	= { }
+
+				if ( u[ 1 ] )
+				{
+					u	= u[ 1 ].split( '&' );
+
+					$.each( u, function()
+					{
+						var v			= this.split( '=' );
+
+						vs[ v[ 0 ] ]	= v[ 1 ];
+					});
+					
+					return vs;
+				}
+			}
+			
+			function ready()
+			{
+				if ( r.oauth_token )
+				{
+					FB.api( '/me/accounts', function(r)
+					{
+						console.log(r)
+					});
+				}
+				else
+				{
+					
+					
+					/*top.location.href = 'https://www.facebook.com/dialog/oauth?client_id={{ d.fb.app_id }}' +
+										'&redirect_uri=' + escape( '{{ d.fb.app_url }}' + v[ 'fb_page_id' ] ) + 
+										'&scope=manage_pages';*/
+				}
+			}
+			
+			FB.init({
+				appId	: '{{ d.fb.app_id }}',
+				status	: true,
+				cookie	: true
+			});
+			
+			$( document ).ready( ready );
+		-->
+		</script>
 	</body>
 </html>
