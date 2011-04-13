@@ -30,15 +30,42 @@ class PageData(db.Model):
 
 class EditHandler(webapp.RequestHandler):
     def post(self):
-        self.response.out.write('Well..')
+    #def get(self):
+        # get the config
+        c = Config().config
+        
+        # check for method
+        if self.request.get( 'method' ):
+            print 'yay'
+            
+        else:
+            # get the request data
+            r = ParseSignedRequest( self.request.get( 'signed_request' ) ).data
+            
+            # dump it as json
+            r = simplejson.dumps( r )
+        
+        # prepare the template
+        t = template.render(
+                                os.path.join( 
+                                                os.path.dirname( __file__ ), 
+                                                'template/edit.html' 
+                                            ), 
+                                { 'd': c, 'r': r } 
+                            )
+
+        # and render it
+        self.response.out.write( t )
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
+        # get the config
+        c = Config().config
+        
         # nothing happens in get, so send them packing to Facebook
-        self.redirect( 'http://www.facebook.com/apps/application.php?id=124030941005528' );
+        self.redirect( 'http://www.facebook.com/apps/application.php?id=%d' % c[ 'fb' ][ 'app_id' ] );
     
     def post(self):
-    #def get(self):
         # get the config
         c = Config().config
         
@@ -101,7 +128,13 @@ class Config(object):
         
         if c is None:
             # read the config
-            f = open( 'config.yaml', 'r' )
+            f = open( 
+                        os.path.join( 
+                                        os.path.dirname( __file__ ),
+                                        'config.yaml'
+                                    ), 
+                        'r'
+                    )
             
             # yamlize its ass
             c = yaml.load( f.read() )
