@@ -44,6 +44,7 @@ h1:first-child,h2:first-child,h3:first-child,p:first-child{margin-top:0;}
 #more_gigs_events{top:230px;left:240px;}
 #edit #first_run{display:block;position:relative;margin:0 0 10px 0;}#edit #first_run .close{display:block;position:absolute;cursor:pointer;border:none;font-weight:bold;background:#345d94;color:#ffffff;right:10px;top:10px;padding:4px 5px 3px 6px;}
 #edit #first_run p{margin-top:0;}
+#edit #message p{margin:0;}
 #edit table small,#edit table small a{font-size:8pt;}
 #edit table tr{border-bottom:1px #eeeeee solid;}
 #edit table th,#edit table td{text-align:left;vertical-align:top;padding:3px;}
