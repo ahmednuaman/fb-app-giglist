@@ -199,6 +199,11 @@
 						if ( d.length != 0 )
 						{
 							$( '#first_run' ).hide();
+							
+							$.each( d, function(i)
+							{
+								$( 'form :input[name=' + i + ']' ).val( this );
+							});
 						}
 						
 						$( 'form' ).submit( function()
