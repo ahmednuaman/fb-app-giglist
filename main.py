@@ -296,10 +296,17 @@ class CheckUserPageAuth(object):
             
             # and now if we found the page, we set them a cookie
             if c:
+                # get the current session
                 s = get_current_session()
+                
+                # start it
+                s.start()
                 
                 # set page_id session item
                 s[ 'page_id' ] = self.page_id
+                
+                # save the session
+                s.save()
             
         
         # return check
