@@ -8,9 +8,13 @@
 		<title></title>
 	</head>
 	<body>
-		<div id="authed" class="hide">
-			
+		<div id="notauthed">
+			<h1>Sorry, but you're not allowed to edit this page :(</h1>
 		</div>
+		<div id="authed">
+			<h1>Yay times!</h1>
+		</div>
+		<div id="loader"></div>
 		<div id="fb-root"></div>
 		<script src="http://connect.facebook.net/en_US/all.js"></script>
 		<script src="/assets/js/jquery.js"></script>
@@ -18,6 +22,7 @@
 		<!--
 			var r = {{ r }};
 			var v = getVars();
+			var id;
 			
 			function getVars()
 			{
@@ -41,21 +46,45 @@
 			
 			function ready()
 			{
-				if ( r.oauth_token )
+				$( '#notauthed, #authed' ).hide();
+				
+				FB.getLoginStatus( function(r)
 				{
-					FB.api( '/me/accounts', function(r)
+					if ( r.session )
 					{
-						console.log(r)
-					});
-				}
-				else
-				{
-					
-					
-					/*top.location.href = 'https://www.facebook.com/dialog/oauth?client_id={{ d.fb.app_id }}' +
-										'&redirect_uri=' + escape( '{{ d.fb.app_url }}' + v[ 'fb_page_id' ] ) + 
-										'&scope=manage_pages';*/
-				}
+						FB.api( '/me/accounts', function(r)
+						{
+							for ( i = 0; i < r.data.length; i++ )
+							{
+								if ( r.data[ i ].id == v[ 'fb_page_id' ] )
+								{
+									id	= r.data[ i ].id;
+									
+									break;
+								}
+							}
+							
+							if ( !id )
+							{
+								$( '#notauthed' ).show();
+								
+								$( '#authed' ).hide();
+							}
+							else
+							{
+								$( '#authed' ).show();
+								
+								$( '#notauthed' ).hide();
+							}
+						});
+					}
+					else
+					{
+						top.location.href = 'https://www.facebook.com/dialog/oauth?client_id={{ d.fb.app_id }}' +
+											'&redirect_uri=' + escape( '{{ d.fb.app_url }}' + v[ 'fb_page_id' ] ) + 
+											'&scope=email,manage_pages';
+					}
+				});
 			}
 			
 			FB.init({
