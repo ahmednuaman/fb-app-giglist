@@ -317,7 +317,7 @@ class GetPageData(object):
         s = get_current_session()
         
         # check for the page id
-        if s[ 'page_id' ]:
+        if s.has_key( 'page_id' ):
             # now get any info we have about this page from the ds
             q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', s[ 'page_id' ] ).get()
             
