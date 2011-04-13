@@ -107,31 +107,19 @@ class MainHandler(webapp.RequestHandler):
         d = memcache.get( 'prefs-' + r[ 'page' ][ 'id' ] )
         
         if d is None:
-            # now let's prepare the page defined vars
-            q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', r[ 'page' ][ 'id' ] ).get()
+            # get current page data
+            l = GetPageData( r[ 'page' ][ 'id' ] ).data
             
-            # get the default info
+            # get default page data
             d = c[ 'data' ]
             
-            if q is not None:
-                # now we need to update d with q's values
-                ps = PageData.properties().iteritems()
-                l = { }
-                
-                # we cycle through the properties of the model
-                for k, p in ps:
-                    v = getattr( q, k )
-                    
-                    # if the value isn't empty, we add it to l
-                    if v is not None:
-                        l[ k ] = v
-                    
-                
-                # finally, we merge the bad boys
+            # check if there is page data
+            if l is not None:
+                # we merge the bad boys
                 d.update( l )
                 
-                # and stick it in the memcache
-                memcache.add( 'prefs-' + r[ 'page' ][ 'id' ], d )
+            # and stick it in the memcache
+            memcache.add( 'prefs-' + r[ 'page' ][ 'id' ], d )
             
         
         # and now we prepare our template
@@ -316,22 +304,40 @@ class CheckUserPageAuth(object):
     
 
 class GetPageData(object):
-    def __init__(self):
-        # get the session
-        s = get_current_session()
+    def __init__(self, page_id=None):
+        # check if page id has been supplied
+        if page_id is None:
+            # get the session
+            s = get_current_session()
+
+            # check for the page id
+            if s.has_key( 'page_id' ):
+                page_id = s[ 'page_id' ]
+            
         
-        # check for the page id
-        if s.has_key( 'page_id' ):
+        # check for a valid page id
+        if page_id is not None:
             # now get any info we have about this page from the ds
-            q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', s[ 'page_id' ] ).get()
+            q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', page_id ).get()
             
             if q is None:
                 # it's their first time, return an empty list
                 r = [ ]
             
             else:
-                # return the row
-                r = q
+                # now we need to update d with q's values
+                ps = PageData.properties().iteritems()
+                r = { }
+                
+                # we cycle through the properties of the model
+                for k, p in ps:
+                    v = getattr( q, k )
+                    
+                    # if the value isn't empty, we add it to the list
+                    if v is not None and v != '':
+                        r[ k ] = v
+                    
+                
             
             # return the data
             self.data = r
