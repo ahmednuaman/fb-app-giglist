@@ -31,7 +31,7 @@ class PageData(db.Model):
     text_more   = db.StringProperty() # the sub title, defaults to 'More gigs:'
     text_time   = db.StringProperty() # prefix for date and time, defaults to 'Date &amp; time:'
     text_addr   = db.StringProperty() # prefix for address/location, defaults to 'Location:'
-    css         = db.StringProperty() # should the user decide they want custom css, defaults to nothing
+    css         = db.TextProperty() # should the user decide they want custom css, defaults to nothing
 
 class EditHandler(webapp.RequestHandler):
     def post(self):
@@ -349,6 +349,10 @@ class GetPageData(object):
                         if k == 'bg_url' or k == 'css':
                             v = urllib.unquote( v )
                         
+                        # we also want to remove any + from the css (I'm doing something wrong here, but I'm too tired to figure it out)
+                        if k == 'css':
+                            v = v.replace( '+', ' ' )
+                        
                         # set the value
                         r[ k ] = v
                     
@@ -419,7 +423,7 @@ class AddPageData(object):
             url = urllib.unquote( self.body[ 'bg_url' ] )
             
             # remove crappy chars
-            url = re.sub( '[^A-z\s0-9~%.:_\-\/]+', '', url )
+            url = re.sub( '[^A-z\s0-9~%.:_\-\/]+', '', url, re.I | re.M )
             
             # set it
             q.bg_url = urllib.quote( url )
@@ -433,7 +437,7 @@ class AddPageData(object):
             css = strip_tags( css )
             
             # set it
-            q.css = urllib.quote( css )
+            q.css = css
         
         # now we put the model instance into the ds
         q.put()
