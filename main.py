@@ -345,8 +345,8 @@ class GetPageData(object):
                     
                     # if the value isn't empty, we add it to the list
                     if v is not None and v != '':
-                        # check if the bg_url has been set, if so, unescape it
-                        if k == 'bg_url':
+                        # check if the bg_url or css has been set, if so, unescape it
+                        if k == 'bg_url' or k == 'css':
                             v = urllib.unquote( v )
                         
                         # set the value
