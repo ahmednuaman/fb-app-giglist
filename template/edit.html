@@ -24,6 +24,7 @@
 				</ul>
 			</div>
 			<div id="message" class="padding border bgblue hide">
+				<a class="close">&times;</a>
 				<p></p>
 			</div>
 			<form>
@@ -190,14 +191,12 @@
 					}
 					else
 					{
-						if ( d.length == 0 )
+						$( 'a.close' ).click( function()
 						{
-							$( '#first_run a.close' ).click( function()
-							{
-								$( this ).parent().slideUp();
-							});
-						}
-						else
+							$( this ).parent().slideUp();
+						});
+						
+						if ( d.length != 0 )
 						{
 							$( '#first_run' ).hide();
 						}
