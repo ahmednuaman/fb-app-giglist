@@ -4,7 +4,9 @@ import base64
 import datetime
 import logging
 import os
+import re
 import time
+import urllib
 import yaml
 
 from django.utils import simplejson 
@@ -393,12 +395,22 @@ class AddPageData(object):
             q = PageData( page_id=self.session[ 'page_id' ] )
         
         # set the properties for the model instance
-        q.bg_url = self.body[ 'bg_url' ]
         q.text_next = self.body[ 'text_next' ]
         q.text_more = self.body[ 'text_more' ]
         q.text_time = self.body[ 'text_time' ]
         q.text_addr = self.body[ 'text_addr' ]
         q.css = self.body[ 'css' ]
+        
+        # let's validate the url, so check for it
+        if self.body.has_key( 'bg_url' ):
+            # unescape it
+            url = urllib.unquote( self.body[ 'bg_url' ] )
+            
+            # remove crappy chars
+            url = re.sub( '[^a-z\s0-9~%.:_\-\/]+', '', url )
+            
+            # set it
+            q.bg_url = urllib.quote( url )
         
         # now we put the model instance into the ds
         q.put()
@@ -407,7 +419,7 @@ class AddPageData(object):
         memcache.delete( 'prefs-' + self.session[ 'page_id' ] )
         
         # and return true
-        return True
+        return url
     
 
 def main():
