@@ -77,10 +77,10 @@ class EditHandler(webapp.RequestHandler):
                                                 ), 
                                     { 'd': c, 'r': r } 
                                 )
-
+            
             # and render it
             self.response.out.write( t )
-        
+    
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -309,7 +309,7 @@ class GetPageData(object):
         if page_id is None:
             # get the session
             s = get_current_session()
-
+            
             # check for the page id
             if s.has_key( 'page_id' ):
                 page_id = s[ 'page_id' ]
@@ -402,6 +402,9 @@ class AddPageData(object):
         
         # now we put the model instance into the ds
         q.put()
+        
+        # and make sure we clear the memcache store
+        memcache.delete( 'prefs-' + self.session[ 'page_id' ] )
         
         # and return true
         return True
