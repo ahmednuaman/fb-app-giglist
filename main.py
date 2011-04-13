@@ -49,6 +49,10 @@ class EditHandler(webapp.RequestHandler):
             elif m == 'get_data':
                 r = GetPageData().data
             
+            # add/set page data
+            elif m == 'add_data':
+                r = AddPageData( self.request.body ).status
+            
             # render return as json
             r = simplejson.dumps( r )
             
@@ -336,6 +340,65 @@ class GetPageData(object):
             # no session, no lighty
             self.data = False
         
+    
+
+class AddPageData(object):
+    def __init__(self, body):
+        # get the session
+        self.session = get_current_session()
+        
+        # check for the page id
+        if self.session.has_key( 'page_id' ):
+            # since we get the request body, let's create a dict of it
+            self.body = self._format_body( body )
+            
+            # now we parse the data
+            self.status = self._parse_body()
+        
+        else:
+            # oh dear
+            self.status = False
+        
+    
+    def _format_body(self, body):
+        # get our dict ready
+        b = { }
+        
+        # split the request into name=value
+        r = body.split( '&' )
+        
+        # loop through them
+        for i in r:
+            # split each item into name, value
+            i = i.split( '=' )
+            
+            # stick item into our dict
+            b[ i[ 0 ] ] = i[ 1 ]
+        
+        # return the dict
+        return b
+    
+    def _parse_body(self):
+        # check to see if the page already has props in the ds
+        q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', self.session[ 'page_id' ] ).get()
+        
+        # if there isn't one, create a new model instance
+        if q is None:
+            q = PageData( page_id=self.session[ 'page_id' ] )
+        
+        # set the properties for the model instance
+        q.bg_url = self.body[ 'bg_url' ]
+        q.text_next = self.body[ 'text_next' ]
+        q.text_more = self.body[ 'text_more' ]
+        q.text_time = self.body[ 'text_time' ]
+        q.text_addr = self.body[ 'text_addr' ]
+        q.css = self.body[ 'css' ]
+        
+        # now we put the model instance into the ds
+        q.put()
+        
+        # and return true
+        return True
     
 
 def main():

@@ -23,6 +23,9 @@
 					<li>Change the CSS so you can move the information around</li>
 				</ul>
 			</div>
+			<div id="message" class="padding border bgblue hide">
+				<p></p>
+			</div>
 			<form>
 				<table>
 					<tr>
@@ -85,16 +88,16 @@
 									#next_gig_info { }<br />
 									#next_gig_info h2 { }<br />
 									#next_gig_info ul { }<br />
-									#next_gig_info li { }<br />
-									#next_gig_info span { }<br />
+									#next_gig_info ul li { }<br />
+									#next_gig_info ul li span { }<br />
 									#more_gigs_heading { }<br />
 									#more_gigs_heading h1 { }<br />
 									#more_gigs_events { }<br />
 									#more_gigs_events div { }<br />
-									#more_gigs_events ul { }<br />
-									#more_gigs_events li { }<br />
-									#more_gigs_events h2 { }<br />
-									#more_gigs_events span { }<br />
+									#more_gigs_events div h2 { }<br />
+									#more_gigs_events div ul { }<br />
+									#more_gigs_events div ul li { }<br />
+									#more_gigs_events div ul li span { }<br />
 								</code>
 							</small>
 						</th>
@@ -103,6 +106,7 @@
 						</td>
 					</tr>
 				</table>
+				<input type="hidden" name="method" value="add_data" />
 				<button type="submit">
 					Update
 				</button>
@@ -140,7 +144,7 @@
 			
 			function ready()
 			{
-				$( '#notauthed, #authed' ).removeClass( 'hide' ).hide();
+				$( '#notauthed, #authed, #message' ).removeClass( 'hide' ).hide();
 				
 				/*FB.getLoginStatus( function(r)
 				{*/
@@ -197,6 +201,33 @@
 								$( this ).parent().slideUp();
 							});
 						}
+						
+						$( 'form' ).submit( function()
+						{
+							$( '#message' ).hide();
+							
+							$( '#loader' ).show();
+							
+							$.postJSON( $( this ).serialize(), function(d)
+							{
+								var m;
+								
+								if ( d )
+								{
+									m	= 'Thanks, your details have been updated!';
+								}
+								else
+								{
+									m	= 'Woops, something went wrong, please try again.';
+								}
+								
+								$( '#message' ).show().find( 'p' ).text( m );
+								
+								$( '#loader' ).hide();
+							});
+							
+							return false;
+						});
 						
 						$( '#loader' ).hide();
 					}
