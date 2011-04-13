@@ -419,7 +419,7 @@ class AddPageData(object):
             url = urllib.unquote( self.body[ 'bg_url' ] )
             
             # remove crappy chars
-            url = re.sub( '[^a-z\s0-9~%.:_\-\/]+', '', url )
+            url = re.sub( '[^A-z\s0-9~%.:_\-\/]+', '', url )
             
             # set it
             q.bg_url = urllib.quote( url )
