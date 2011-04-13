@@ -10,6 +10,7 @@ import urllib
 import yaml
 
 from django.utils import simplejson 
+from django.utils.html import strip_tags
 from google.appengine.api import memcache
 from google.appengine.api import urlfetch
 from google.appengine.ext import db
@@ -404,7 +405,6 @@ class AddPageData(object):
         q.text_more = self.body[ 'text_more' ]
         q.text_time = self.body[ 'text_time' ]
         q.text_addr = self.body[ 'text_addr' ]
-        q.css = self.body[ 'css' ]
         
         # let's validate the url, so check for it
         if self.body.has_key( 'bg_url' ):
@@ -416,6 +416,17 @@ class AddPageData(object):
             
             # set it
             q.bg_url = urllib.quote( url )
+        
+        # let's sanatise the css
+        if self.body.has_key( 'css' ):
+            # unescape it
+            css = urllib.unquote( self.body[ 'css' ] )
+            
+            # clean the bad boy
+            css = strip_tags( css )
+            
+            # set it
+            q.css = urllib.quote( css )
         
         # now we put the model instance into the ds
         q.put()
