@@ -184,22 +184,22 @@
 			{
 				$.postJSON( { method: 'get_data' }, function(d)
 				{
-					if ( !d )
+					if ( d === false )
 					{
 						ready();
 					}
 					else
 					{
-						if ( d.length > 0 )
-						{
-							$( '#first_run' ).hide();
-						}
-						else
+						if ( d.length == 0 )
 						{
 							$( '#first_run a.close' ).click( function()
 							{
 								$( this ).parent().slideUp();
 							});
+						}
+						else
+						{
+							$( '#first_run' ).hide();
 						}
 						
 						$( 'form' ).submit( function()
