@@ -15,6 +15,8 @@ from google.appengine.ext import webapp
 from google.appengine.ext.webapp import template
 from google.appengine.ext.webapp import util
 
+from gaesessions import get_current_session
+
 GRAPH_URL = 'https://graph.facebook.com/'
 
 class PageData(db.Model):
@@ -36,7 +38,25 @@ class EditHandler(webapp.RequestHandler):
         
         # check for method
         if self.request.get( 'method' ):
-            print 'yay'
+            # now switch through the methods
+            m = self.request.get( 'method' )
+            
+            # check user auth
+            if m == 'auth':
+                r = CheckUserPageAuth( self.request.get( 'access_token' ), self.request.get( 'fb_page_id' ) ).check
+            
+            # get the page data
+            elif m == 'get_data':
+                r = GetPageData().data
+            
+            # render return as json
+            r = simplejson.dumps( r )
+            
+            # set the header as json
+            self.response.headers[ 'Content-Type' ] = 'application/json'
+            
+            # and write it
+            self.response.out.write( r )
             
         else:
             # get the request data
@@ -44,18 +64,19 @@ class EditHandler(webapp.RequestHandler):
             
             # dump it as json
             r = simplejson.dumps( r )
-        
-        # prepare the template
-        t = template.render(
-                                os.path.join( 
-                                                os.path.dirname( __file__ ), 
-                                                'template/edit.html' 
-                                            ), 
-                                { 'd': c, 'r': r } 
-                            )
+            
+            # prepare the template
+            t = template.render(
+                                    os.path.join( 
+                                                    os.path.dirname( __file__ ), 
+                                                    'template/edit.html' 
+                                                ), 
+                                    { 'd': c, 'r': r } 
+                                )
 
-        # and render it
-        self.response.out.write( t )
+            # and render it
+            self.response.out.write( t )
+        
 
 class MainHandler(webapp.RequestHandler):
     def get(self):
@@ -214,6 +235,7 @@ class GetPageEvents(object):
         self.events = e
         
     def _get_events(self):
+        # prepare the url
         u = GRAPH_URL + self.page_id + '/events?access_token=%s' % self.access_token
         
         # make the request
@@ -245,6 +267,76 @@ class GetPageEvents(object):
             es = { 'ne': e.pop( 0 ), 'es': e }
             
         return es
+
+class CheckUserPageAuth(object):
+    def __init__(self, access_token, page_id):
+        self.access_token = access_token
+        self.page_id = page_id
+        
+        # run the check
+        self.check = self._check_auth()
+        
+    def _check_auth(self):
+        # prepare el url
+        u = GRAPH_URL + '/me/accounts?access_token=%s' % self.access_token
+        
+        # make the request
+        r = urlfetch.fetch( u )
+        
+        # we set the check as false
+        c = False
+        
+        if r.status_code == 200:
+            # decode the json
+            d = simplejson.loads( r.content )[ 'data' ]
+            
+            # loop through their auth'd pages to see if they can access this one
+            for a in d:
+                # yay we found it
+                if a[ 'id' ] == self.page_id:
+                    c = True
+                    
+                    break
+                
+            
+            # and now if we found the page, we set them a cookie
+            if c:
+                s = get_current_session()
+                
+                # set page_id session item
+                s[ 'page_id' ] = self.page_id
+            
+        
+        # return check
+        return c
+    
+
+class GetPageData(object):
+    def __init__(self):
+        # get the session
+        s = get_current_session()
+        
+        # check for the page id
+        if s[ 'page_id' ]:
+            # now get any info we have about this page from the ds
+            q = db.GqlQuery( 'SELECT * FROM PageData WHERE page_id = :1', s[ 'page_id' ] ).get()
+            
+            if q is None:
+                # it's their first time, return an empty list
+                r = [ ]
+            
+            else:
+                # return the row
+                r = q
+            
+            # return the data
+            self.data = r
+            
+        else:
+            # no session, no lighty
+            self.data = False
+        
+    
 
 def main():
     application = webapp.WSGIApplication( [

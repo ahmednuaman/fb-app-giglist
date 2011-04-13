@@ -39,6 +39,14 @@ html{color:#000;background:#FFF;}body,div,dl,dt,dd,ul,ol,li,h1,h2,h3,h4,h5,h6,pr
 	display: block;
 	position: absolute;
 }
+.bgblue
+{
+	background: #F2F2F2;
+}
+.border
+{
+	border: 1px solid #345d94;
+}
 .caps
 {
 	text-transform: uppercase;
@@ -136,6 +144,7 @@ h1,
 h2,
 h3
 {
+	color: #345d94;
 	line-height: normal;
 }
 h1
@@ -220,15 +229,82 @@ p:first-child
 	top: 230px;
 	left: 240px;
 }
-#loader
+#edit
 {
-	.fixed;
-	.top;
-	width: 100%;
-	height: 100%;
-	top: 0;
-	left: 0;
-	background: url(../image/ajax-loader.gif) no-repeat center center #ffffff;
+	#first_run
+	{
+		.relative;
+		margin: 0 0 10px 0;
+		
+		.close
+		{
+			.absolute;
+			cursor: pointer;
+			border: none;
+			font-weight: bold;
+			background: #345d94;
+			color: #ffffff;
+			right: 10px;
+			top: 10px;
+			padding: 4px 5px 3px 6px;
+		}
+		p
+		{
+			margin-top: 0;
+		}
+	}
+	table
+	{
+		small,
+		small a
+		{
+			font-size: 8pt;
+		}
+		tr
+		{
+			border-bottom: 1px #eeeeee solid;
+		}
+		th,
+		td
+		{
+			text-align: left;
+			vertical-align: top;
+			padding: 3px;
+		}
+		th
+		{
+			width: 40%;
+		}
+		td
+		{
+			width: 60%;
+			
+			input
+			{
+				min-width: 50%;
+				padding: 2px;
+			}
+			textarea
+			{
+				width: 95%;
+				height: 310px;
+			}
+		}
+	}
+	button
+	{
+		margin: 5px 0;
+	}
+	#loader
+	{
+		.fixed;
+		.top;
+		width: 100%;
+		height: 100%;
+		top: 0;
+		left: 0;
+		background: url(../image/ajax-loader.gif) no-repeat center center #ffffff;
+	}
 }
 
 /* Browser specific */

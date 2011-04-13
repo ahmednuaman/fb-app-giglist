@@ -7,12 +7,106 @@
 		<link type="text/css" rel="stylesheet" href="/assets/css/styles.css" />
 		<title></title>
 	</head>
-	<body>
-		<div id="notauthed">
+	<body id="edit">
+		<div id="notauthed" class="hide">
 			<h1>Sorry, but you're not allowed to edit this page :(</h1>
 		</div>
-		<div id="authed">
-			<h1>Yay times!</h1>
+		<div id="authed" class="hide">
+			<h1>Gig List App</h1>
+			<div id="first_run" class="padding border bgblue">
+				<a class="close">&times;</a>
+				<p>Well hello! It looks like this is your first time using this app. Here's a quick run down of what you can do:</p>
+				<ul>
+					<li>Add the ability to display your next and upcoming gigs on your Facebook Page (as a tab)</li>
+					<li>Change the background image to suit your band's design</li>
+					<li>Change the text that's prefixed to the information (such as 'next gig', etc...)</li>
+					<li>Change the CSS so you can move the information around</li>
+				</ul>
+			</div>
+			<form>
+				<table>
+					<tr>
+						<th>
+							Background Image URL<br />
+							<small>
+								Please upload an image and then place the URL here. 
+								If you don't have anywhere to upload an image to, just upload to Facebook as a photo.
+								Please note that the image needs to be 520px wide at max, here's a <a href="/assets/image/bg.psd">PSD template</a>.
+							</small>
+						</th>
+						<td>
+							<input type="text" name="bg_url" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Next gig text<br />
+							<small>This is the text that'll appear alongside your next gig</small>
+						</th>
+						<td>
+							<input type="text" name="text_next" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							More gigs text<br />
+							<small>This is the text that'll appear alongside your upcoming gigs</small>
+						</th>
+						<td>
+							<input type="text" name="text_more" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Time text<br />
+							<small>This is the text that'll appear alongside the time of the gig</small>
+						</th>
+						<td>
+							<input type="text" name="text_time" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							Address text<br />
+							<small>This is the text that'll appear alongside the address/location of the gig</small>
+						</th>
+						<td>
+							<input type="text" name="text_addr" value="" />
+						</td>
+					</tr>
+					<tr>
+						<th>
+							CSS<br />
+							<small>
+								You can edit the follow rules:<br />
+								<code>
+									#next_gig_heading { }<br />
+									#next_gig_heading h1 { }<br />
+									#next_gig_info { }<br />
+									#next_gig_info h2 { }<br />
+									#next_gig_info ul { }<br />
+									#next_gig_info li { }<br />
+									#next_gig_info span { }<br />
+									#more_gigs_heading { }<br />
+									#more_gigs_heading h1 { }<br />
+									#more_gigs_events { }<br />
+									#more_gigs_events div { }<br />
+									#more_gigs_events ul { }<br />
+									#more_gigs_events li { }<br />
+									#more_gigs_events h2 { }<br />
+									#more_gigs_events span { }<br />
+								</code>
+							</small>
+						</th>
+						<td>
+							<textarea name="css" rows="8" cols="40"></textarea>
+						</td>
+					</tr>
+				</table>
+				<button type="submit">
+					Update
+				</button>
+			</form>
 		</div>
 		<div id="loader"></div>
 		<div id="fb-root"></div>
@@ -22,7 +116,6 @@
 		<!--
 			var r = {{ r }};
 			var v = getVars();
-			var id;
 			
 			function getVars()
 			{
@@ -46,35 +139,30 @@
 			
 			function ready()
 			{
-				$( '#notauthed, #authed' ).hide();
+				$( '#notauthed, #authed' ).removeClass( 'hide' ).hide();
 				
-				FB.getLoginStatus( function(r)
-				{
-					if ( r.session )
+				/*FB.getLoginStatus( function(r)
+				{*/
+					// if ( r.session )
+					if ( r.hasOwnProperty( 'oauth_token' ) )
 					{
-						FB.api( '/me/accounts', function(r)
+						$.postJSON( { access_token: r.oauth_token, method: 'auth' }, function(d)
 						{
-							for ( i = 0; i < r.data.length; i++ )
-							{
-								if ( r.data[ i ].id == v[ 'fb_page_id' ] )
-								{
-									id	= r.data[ i ].id;
-									
-									break;
-								}
-							}
-							
-							if ( !id )
+							if ( !d )
 							{
 								$( '#notauthed' ).show();
 								
 								$( '#authed' ).hide();
+								
+								$( '#loader' ).hide();
 							}
 							else
 							{
 								$( '#authed' ).show();
 								
 								$( '#notauthed' ).hide();
+								
+								preparePage();
 							}
 						});
 					}
@@ -84,7 +172,39 @@
 											'&redirect_uri=' + escape( '{{ d.fb.app_url }}' + v[ 'fb_page_id' ] ) + 
 											'&scope=email,manage_pages';
 					}
+				//});
+			}
+			
+			function preparePage()
+			{
+				$.postJSON( { method: 'get_data' }, function(d)
+				{
+					if ( !d )
+					{
+						ready();
+					}
+					else
+					{
+						if ( d.length > 0 )
+						{
+							$( '#first_run' ).hide();
+						}
+						else
+						{
+							$( '#first_run a.close' ).click( function()
+							{
+								$( this ).parent().slideUp();
+							});
+						}
+						
+						$( '#loader' ).hide();
+					}
 				});
+			}
+			
+			$.postJSON	= function(d, c)
+			{
+				$.post( '/edit/?fb_page_id=' + v[ 'fb_page_id' ], d, c, 'json' );
 			}
 			
 			FB.init({
@@ -93,7 +213,8 @@
 				cookie	: true
 			});
 			
-			$( document ).ready( ready );
+			//$( document ).ready( ready );
+			ready();
 		-->
 		</script>
 	</body>
